@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.json",
-  "compilerOptions": { "outDir": "dist", "declaration": false },
-  "exclude": ["test", "**/*.spec.ts", "**/*.e2e-spec.ts"]
+  "compilerOptions": {
+    "outDir": "./dist",
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/**/*", "src/scripts/**"],
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
 }

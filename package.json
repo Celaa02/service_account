@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/main.js",
+    "start:prod": "node dist/src/main.js",
     "build": "nest build",
     "lint": "eslint \"{src,test}/**/*.{ts,tsx}\"",
     "format": "prettier --write .",
@@ -14,8 +14,8 @@
     "test:unit": "jest --selectProjects unit",
     "test:e2e": "jest --selectProjects e2e",
     "test:cov": "jest --coverage",
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/infra/config/typeorm.datasource.ts",
-    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/infra/config/typeorm.datasource.ts",
+    "migration:run:js": "typeorm migration:run -d dist/infra/config/typeorm.datasource.js",
+    "migration:revert:js": "typeorm migration:revert -d dist/infra/config/typeorm.datasource.js",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate src/infra/db/typeorm/migrations/init -d src/infra/config/typeorm.datasource.ts",
     "prepare": "husky"
   },
