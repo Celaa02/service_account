@@ -20,6 +20,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "ajv": "6.12.6",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/js": "^9.37.0",
@@ -32,6 +33,7 @@
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
+    "cosmiconfig": "^9.0.0",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-import": "^2.29.1",
@@ -70,5 +72,10 @@
     "*.{ts,js}": [
       "eslint --fix"
     ]
+  },
+  "overrides": {
+    "@eslint/eslintrc@3.3.1": {
+      "ajv": "6.12.6"
+    }
   }
 }
