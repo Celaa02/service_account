@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-redeclare */
 import { Body, Controller, Post, UseGuards, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+
 import { Request } from 'express';
 import { CreateTransactionDto, TxKindDTO } from '../../app/transactions/dto/create-transaction.dto';
 import { CreateTransactionUseCase } from '../../app/transactions/use-cases/create-transaction.usecase';
