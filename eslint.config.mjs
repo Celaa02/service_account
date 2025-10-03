@@ -45,7 +45,7 @@ export default [
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: ['./tsconfig.json'], // agrega tsconfig.build.json si lo usas
+        project: ['./tsconfig.eslint.json'], // agrega tsconfig.build.json si lo usas
         tsconfigRootDir: import.meta.dirname,
       },
     },

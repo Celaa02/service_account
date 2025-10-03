@@ -13,6 +13,6 @@
     "skipLibCheck": true,
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "jest.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["jest.config.ts", "node_modules", "dist", "test"]
 }

@@ -19,17 +19,17 @@ export class AccountsTypeormRepository implements IAccountsRepository {
     const entity = this.repo.create({
       holderName: input.holderName,
       accountNumber: input.accountNumber,
-      balance: input.balance, // ✅ number (transformer hace el resto)
+      balance: input.balance,
       ownerId: input.ownerId,
     } as DeepPartial<AccountOrmEntity>);
 
     const saved = await this.repo.save(entity);
-    return saved; // ✅ balance ya es number por el transformer
+    return saved;
   }
 
   async findById(id: string) {
     const e = await this.repo.findOne({ where: { id } });
-    return e ?? null; // ✅ no hace falta Number(...)
+    return e ?? null;
   }
 
   async findByAccountNumber(accountNumber: string) {

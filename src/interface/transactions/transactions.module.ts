@@ -7,13 +7,10 @@ import { TransactionsTypeormRepository } from '../../infra/db/typeorm/repositori
 import { CreateTransactionUseCase } from '../../app/transactions/use-cases/create-transaction.usecase';
 import { AccountsTypeormRepository } from '../../infra/db/typeorm/repositories/accounts.typeorm-repository';
 import { AuthModule } from '../auth/auth.module'; // 👈 más simple: importa AuthModule
+import { CreateTransferUseCase } from '../../app/transactions/use-cases/create-transfer.usecase';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([TransactionOrmEntity, AccountOrmEntity]),
-    AuthModule, // 👈 con esto ya llega PassportModule y la estrategia
-    // o, alternativamente: PassportModule.register({ defaultStrategy: 'jwt' }),
-  ],
+  imports: [TypeOrmModule.forFeature([TransactionOrmEntity, AccountOrmEntity]), AuthModule],
   controllers: [TransactionsController],
   providers: [
     TransactionsTypeormRepository,
@@ -22,6 +19,12 @@ import { AuthModule } from '../auth/auth.module'; // 👈 más simple: importa A
       provide: CreateTransactionUseCase,
       useFactory: (a: AccountsTypeormRepository, t: TransactionsTypeormRepository) =>
         new CreateTransactionUseCase(a, t),
+      inject: [AccountsTypeormRepository, TransactionsTypeormRepository],
+    },
+    {
+      provide: CreateTransferUseCase,
+      useFactory: (accRepo: AccountsTypeormRepository, txRepo: TransactionsTypeormRepository) =>
+        new CreateTransferUseCase(accRepo, txRepo),
       inject: [AccountsTypeormRepository, TransactionsTypeormRepository],
     },
   ],

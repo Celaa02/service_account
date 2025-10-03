@@ -10,7 +10,7 @@ export class CreateTransactionDto {
   accountId!: string;
 
   @IsEnum(TxKindDTO)
-  type!: TxKindDTO; // 👈 Aquí entra TxKindDTO
+  type!: TxKindDTO;
 
   @IsNumber()
   @Min(0.01)

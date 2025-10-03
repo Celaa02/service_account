@@ -19,7 +19,6 @@ export class CreateTransactionUseCase {
     const account = await this.accounts.findById(input.accountId);
     if (!account) throw new DomainError(ErrorCodes.ACCOUNT_NOT_FOUND);
 
-    // 👇 Validar propiedad
     if (account.ownerId !== input.userId) {
       throw new DomainError('ACCOUNT_NOT_OWNED' as any, 'Account does not belong to user', {
         accountId: input.accountId,
@@ -27,7 +26,6 @@ export class CreateTransactionUseCase {
       });
     }
 
-    // 👇 Validar balance si es retiro
     if (input.type === TransactionType.WITHDRAWAL && account.balance < input.amount) {
       throw new DomainError(ErrorCodes.INSUFFICIENT_FUNDS, 'Insufficient funds', {
         balance: account.balance,
@@ -35,7 +33,6 @@ export class CreateTransactionUseCase {
       });
     }
 
-    // Delegamos a repo de transacciones que aplica lock + persiste y ajusta balance
     return this.transactions.create({
       accountId: input.accountId,
       type: input.type,

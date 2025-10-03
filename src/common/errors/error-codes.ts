@@ -9,6 +9,7 @@ export const ErrorCodes = {
   DB_ERROR: 'DB_ERROR',
   UNEXPECTED: 'UNEXPECTED',
   TRANSFER_SAME_ACCOUNT: 'TRANSFER_SAME_ACCOUNT',
+  ACCOUNT_NOT_OWNED: 'ACCOUNT_NOT_OWNED',
 } as const;
 
 export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];

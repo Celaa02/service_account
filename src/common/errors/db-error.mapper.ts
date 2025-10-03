@@ -2,7 +2,6 @@ import { QueryFailedError } from 'typeorm';
 import { DomainError } from './domain-error';
 import { ErrorCodes } from './error-codes';
 
-// Helpers seguros para leer props de objetos desconocidos
 function getStr(obj: unknown, key: string): string | undefined {
   if (obj && typeof obj === 'object') {
     const v = (obj as Record<string, unknown>)[key];
@@ -13,7 +12,6 @@ function getStr(obj: unknown, key: string): string | undefined {
 
 export function mapDbError(err: unknown): never {
   if (err instanceof QueryFailedError) {
-    // driverError es any -> lo tratamos como unknown y extraemos strings de forma segura
     const drv: unknown = (err as QueryFailedError).driverError;
 
     const code = getStr(drv, 'code'); // p.ej. '23505'
@@ -53,10 +51,9 @@ export function mapDbError(err: unknown): never {
       });
     }
 
-    // Fallback genérico
     throw new DomainError(ErrorCodes.DB_ERROR, 'Database error', {
       code,
-      message: drvMsg ?? err.message, // err es QueryFailedError (extiende Error)
+      message: drvMsg ?? err.message,
       detail,
       constraint,
       table,
@@ -65,6 +62,5 @@ export function mapDbError(err: unknown): never {
     });
   }
 
-  // No es un QueryFailedError -> re-lanza tipado
   throw err instanceof Error ? err : new Error(String(err));
 }

@@ -62,6 +62,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         [ErrorCodes.INSUFFICIENT_FUNDS]: HttpStatus.BAD_REQUEST,
         [ErrorCodes.DB_UNIQUE_VIOLATION]: HttpStatus.CONFLICT,
         [ErrorCodes.DB_ERROR]: HttpStatus.INTERNAL_SERVER_ERROR,
+        [ErrorCodes.ACCOUNT_NOT_OWNED]: HttpStatus.FORBIDDEN,
         // agrega aquí otros códigos si los tienes (p. ej. ACCOUNT_NOT_OWNED, TRANSFER_SAME_ACCOUNT, etc.)
       };
       code = exception.code;

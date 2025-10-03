@@ -9,8 +9,8 @@ import { LoginUserDto } from '../../app/auth/dto/login-user.dto';
 export class AuthController {
   constructor(
     private readonly jwt: JwtService,
-    private readonly registerUser: RegisterUserUseCase, // 👈 token = clase
-    private readonly loginUser: LoginUserUseCase, // 👈 token = clase
+    private readonly registerUser: RegisterUserUseCase,
+    private readonly loginUser: LoginUserUseCase,
   ) {}
 
   @Post('register')
