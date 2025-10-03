@@ -1,0 +1,115 @@
+name: CI (develop)
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+concurrency:
+  group: ci-develop-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  lint_and_tests:
+    name: Lint & Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install deps (ci)
+        run: npm ci --no-audit --no-fund --ignore-scripts
+        env:
+          HUSKY: 0
+
+      - name: Prettier check
+        run: npx prettier -c .
+
+      - name: ESLint
+        run: npx eslint . --max-warnings=0
+
+      - name: Unit tests
+        run: npm run test:unit -- --ci --reporters=default --coverage
+
+      - name: Upload coverage (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+  docker_integration:
+    name: Docker Build & Integration (compose)
+    needs: lint_and_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build compose images
+        run: |
+          docker compose build
+
+      - name: Start Postgres (detached) & wait for health
+        run: |
+          docker compose up -d postgres
+          PG_ID=$(docker compose ps -q postgres)
+          echo "Postgres container: $PG_ID"
+          for i in {1..60}; do
+            STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$PG_ID" 2>/dev/null || echo starting)
+            echo "pg health: $STATUS"
+            [ "$STATUS" = "healthy" ] && break
+            sleep 2
+          done
+          [ "$STATUS" = "healthy" ] || (echo "Postgres not healthy" && docker compose logs postgres && exit 1)
+
+      - name: Run DB migrations (compose service)
+        run: |
+          # Ejecuta el servicio migrate (usa tu datasource TS) y sale cuando finaliza
+          docker compose up --exit-code-from migrate migrate
+
+      - name: Start backend & probe health
+        run: |
+          docker compose up -d backend
+          for i in {1..60}; do
+            if curl -fsS http://localhost:3000/health >/dev/null; then
+              echo "Backend is up"; break
+            fi
+            sleep 2
+          done
+          curl -fsS http://localhost:3000/health || (docker compose logs backend && exit 1)
+
+      - name: Show compose status
+        if: always()
+        run: docker compose ps
+
+      - name: Dump logs on failure
+        if: failure()
+        run: docker compose logs --tail=200
+
+      - name: Teardown
+        if: always()
+        run: docker compose down -v
