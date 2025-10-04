@@ -10,6 +10,7 @@ export const ErrorCodes = {
   UNEXPECTED: 'UNEXPECTED',
   TRANSFER_SAME_ACCOUNT: 'TRANSFER_SAME_ACCOUNT',
   ACCOUNT_NOT_OWNED: 'ACCOUNT_NOT_OWNED',
+  EMAIL_ALREADY_REGISTERGED: 'EMAIL_ALREADY_REGISTERGED',
 } as const;
 
 export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];

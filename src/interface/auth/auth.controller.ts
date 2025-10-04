@@ -4,7 +4,9 @@ import { RegisterUserUseCase } from '../../app/auth/use-cases/register-user.usec
 import { LoginUserUseCase } from '../../app/auth/use-cases/login-user.usecase';
 import { RegisterUserDto } from '../../app/auth/dto/register-user.dto';
 import { LoginUserDto } from '../../app/auth/dto/login-user.dto';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -13,6 +15,10 @@ export class AuthController {
     private readonly loginUser: LoginUserUseCase,
   ) {}
 
+  @ApiOperation({ summary: 'Registrar usuario' })
+  @ApiBody({ type: RegisterUserDto })
+  @ApiResponse({ status: 201, description: 'Registrado' })
+  @ApiResponse({ status: 409, description: 'EMAIL_ALREADY_REGISTERED' })
   @Post('register')
   async register(@Body() dto: RegisterUserDto) {
     const user = await this.registerUser.execute({ email: dto.email, password: dto.password });
@@ -21,6 +27,10 @@ export class AuthController {
     return { user, token };
   }
 
+  @ApiOperation({ summary: 'Login' })
+  @ApiBody({ type: LoginUserDto })
+  @ApiResponse({ status: 201, description: 'OK' })
+  @ApiResponse({ status: 401, description: 'INVALID_CREDENTIALS' })
   @Post('login')
   async login(@Body() dto: LoginUserDto) {
     const user = await this.loginUser.execute({ email: dto.email, password: dto.password });

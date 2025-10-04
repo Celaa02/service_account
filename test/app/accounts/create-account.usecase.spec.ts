@@ -1,5 +1,5 @@
-import { CreateAccountUseCase } from '../../src/app/accounts/use-cases/create-account.usecase';
-import { IAccountsRepository } from '../../src/domain/accounts/accounts.repository';
+import { CreateAccountUseCase } from '../../../src/app/accounts/use-cases/create-account.usecase';
+import { IAccountsRepository } from '../../../src/domain/accounts/accounts.repository';
 
 // Un fake repo para test
 class FakeAccountsRepo implements IAccountsRepository {

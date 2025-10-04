@@ -47,12 +47,11 @@ export class TransactionsTypeormRepository implements ITransactionsRepository {
 
         if (!account) throw new DomainError(ErrorCodes.ACCOUNT_NOT_FOUND);
 
-        // (opcional) guard extra
         if (!(input.amount > 0)) {
           throw new DomainError(ErrorCodes.INVALID_AMOUNT, 'Amount must be > 0');
         }
 
-        const current = Number(account.balance); // balance ya es number si pusiste transformer
+        const current = Number(account.balance);
         const delta = input.type === TransactionType.DEPOSIT ? input.amount : -input.amount;
         const next = current + delta;
 
@@ -60,8 +59,7 @@ export class TransactionsTypeormRepository implements ITransactionsRepository {
           throw new DomainError(ErrorCodes.INSUFFICIENT_FUNDS);
         }
 
-        // ❌ account.balance = String(next);
-        account.balance = next; // ✅ mantener number; el transformer lo persiste como BIGINT
+        account.balance = next;
         await accRepo.save(account);
 
         const ormType: 'DEPOSIT' | 'WITHDRAWAL' =
@@ -70,7 +68,7 @@ export class TransactionsTypeormRepository implements ITransactionsRepository {
         const tx = txRepo.create({
           accountId: input.accountId,
           type: ormType,
-          amount: input.amount, // Transaction.amount también con transformer bigint⇄number
+          amount: input.amount,
         } as DeepPartial<TransactionOrmEntity>);
 
         const saved = await txRepo.save(tx);
@@ -101,7 +99,6 @@ export class TransactionsTypeormRepository implements ITransactionsRepository {
         const accRepo = manager.getRepository(AccountOrmEntity);
         const txRepo = manager.getRepository(TransactionOrmEntity);
 
-        // Orden estable para evitar deadlocks (bloquear siempre en el mismo orden)
         const [firstId, secondId] =
           input.fromAccountId < input.toAccountId
             ? [input.fromAccountId, input.toAccountId]
@@ -133,13 +130,11 @@ export class TransactionsTypeormRepository implements ITransactionsRepository {
         }
         const toNext = Number(to.balance) + amount;
 
-        // Actualizar saldos (usa transformer bigint⇄number en entidades)
         from.balance = fromNext;
         to.balance = toNext;
         await accRepo.save(from);
         await accRepo.save(to);
 
-        // Asientos: débito (WITHDRAWAL) y crédito (DEPOSIT)
         const debitEnt = txRepo.create({
           accountId: input.fromAccountId,
           type: 'WITHDRAWAL',
@@ -162,5 +157,24 @@ export class TransactionsTypeormRepository implements ITransactionsRepository {
     } catch (e) {
       return mapDbError(e);
     }
+  }
+
+  async listByUser(
+    userId: string,
+    opts?: { limit?: number; offset?: number },
+  ): Promise<Transaction[]> {
+    const limit = Math.min(Math.max(opts?.limit ?? 20, 1), 100);
+    const offset = Math.max(opts?.offset ?? 0, 0);
+
+    const rows = await this.txRepo
+      .createQueryBuilder('t')
+      .innerJoin(AccountOrmEntity, 'a', 'a.id = t.account_id')
+      .where('a.user_id = :userId', { userId })
+      .orderBy('t.created_at', 'DESC')
+      .limit(limit)
+      .offset(offset)
+      .getMany();
+
+    return this.toDomainList(rows);
   }
 }

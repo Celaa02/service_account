@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-redeclare */
+ 
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DomainError } from '../errors/domain-error';
@@ -63,6 +63,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         [ErrorCodes.DB_UNIQUE_VIOLATION]: HttpStatus.CONFLICT,
         [ErrorCodes.DB_ERROR]: HttpStatus.INTERNAL_SERVER_ERROR,
         [ErrorCodes.ACCOUNT_NOT_OWNED]: HttpStatus.FORBIDDEN,
+        [ErrorCodes.EMAIL_ALREADY_REGISTERGED]: HttpStatus.CONFLICT,
         // agrega aquí otros códigos si los tienes (p. ej. ACCOUNT_NOT_OWNED, TRANSFER_SAME_ACCOUNT, etc.)
       };
       code = exception.code;
