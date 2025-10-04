@@ -21,10 +21,18 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-# ACCOUNTS - SERVICES
+# 💳 ACCOUNTS - SERVICES
 
 API para gestión de **usuarios**, **cuentas** y **transacciones** bancarias (depósitos, retiros y transferencias).  
 Incluye **JWT auth**, **validaciones**, **mapeo de errores** consistente y **documentación Swagger**.
+
+---
+
+## 🚀 Descripción general
+
+Este servicio expone endpoints para la **gestión de usuarios, cuentas y transacciones bancarias**, incluyendo depósitos, retiros y transferencias entre cuentas.
+
+Está diseñado con **capas independientes (Domain, Application, Infrastructure, Interface)** para mantener separación de responsabilidades, escalabilidad y facilidad de prueba.
 
 ---
 
@@ -45,21 +53,21 @@ Incluye **JWT auth**, **validaciones**, **mapeo de errores** consistente y **doc
 
 ```
 src/
-  app/                      # Casos de uso (application layer) + DTOs
-  common/
-    errors/                 # DomainError, ErrorCodes, mapDbError
-    filters/                # GlobalHttpExceptionFilter
-    guards/                 # JwtAuthGuard (si aplica)
-  domain/                   # Entidades y contratos (ports/repositories)
-  infra/
-    auth/                   # JwtStrategy
-    config/                 # typeorm.config / datasource
-    db/typeorm/             # Entities + Repositories + Migrations
-  interface/
-    auth/                   # AuthController (+ AuthModule)
-    accounts/               # AccountsController (+ AccountsModule)
-    transactions/           # TransactionsController (+ TransactionsModule)
-main.ts                     # Bootstrap + CORS + Swagger + ValidationPipe + Filter
+├── app                     # Casos de uso (application layer) + DTOs
+├── domain                  # Entidades y contratos (ports/repositories)
+│   ├── accounts
+│   ├── auth
+│   └── transactions
+├── infra
+│   ├── auth                # JwtStrategy
+│   ├── config              # typeorm.config / datasource
+│   └── db/typeorm          # Entities + Repositories + Migrations
+├── interface
+│   ├── accounts            # AuthController (+ AuthModule)
+│   ├── auth                # AccountsController (+ AccountsModule)
+│   └── transactions        # TransactionsController (+ TransactionsModule)
+├── common                  # DomainError, ErrorCodes, mapDbError
+├── main.ts                 # Bootstrap + CORS + Swagger + ValidationPipe + Filter
 ```
 
 ---
@@ -80,11 +88,39 @@ DB_NAME=bank
 DB_SSL=false
 ```
 
-## ▶️ Ejecución local
+---
 
-```
+## 🧪 Quick Start (paso a paso)
+
+1. Instalar
+
+```bash
 npm i
-npm run start:dev
+```
+
+2. Variables
+
+```bash
+cp .env.example .env   # o crea .env como arriba
+```
+
+3. DB (local o docker compose para Postgres)
+4. Migraciones
+
+```bash
+npm run migration:run
+```
+
+5. Levantar
+
+```bash
+npm run
+```
+
+6. Probar
+
+```bash
+open http://localhost:3000/docs
 ```
 
 ---
@@ -94,6 +130,8 @@ npm run start:dev
 ```
 npm run test
 ```
+
+Los tests cubren casos de uso, controladores y manejo de errores.
 
 ---
 
@@ -137,7 +175,7 @@ curl -i http://localhost:3000/
 
 ---
 
-## 🗃️ Migraciones / Init de BD
+## 🧱 Migraciones / Init de BD
 
 **Datasource TypeORM**: src/infra/config/typeorm.datasource.ts
 **Comandos**:
@@ -156,23 +194,20 @@ npm run migration:revert
 
 ---
 
-## 📚 Documentación (Swagger)
-
-- **Swagger UI**: `http://localhost:3000/docs`
-
----
-
-## 📚 Documentación (Swagger)
+## 📘 Documentación (Swagger)
 
 - **Swagger UI**: `http://localhost:3000/api/docs`
-- Archivo fuente: `openapi.yaml` (incluye **auth**, **reports**, **notification**, **project**, **tasks**).
+
+Incluye ejemplos, esquemas DTO, códigos de respuesta y autenticación JWT.
 
 ---
 
 ## 🔐 Autenticación
 
-- Regístrate / inicia sesión para obtener **token JWT**.
-- En endpoints protegidos incluir:
+- Autenticación por **JWT (Bearer Token)**.
+- Registro y login en `/auth/register` y `/auth/login`.
+- Los endpoints protegidos usan `@UseGuards(AuthGuard('jwt'))`.
+  luir:
 
 ```
 Authorization: Bearer <TOKEN>
@@ -224,26 +259,17 @@ curl -s http://localhost:3000/accounts  -H "Authorization: Bearer <TOKEN>"
 
 ---
 
-## 🧪 Tests
+## 🧰 Scripts útiles
 
-```bash
-npm test
-# con cobertura
-npm run test
-```
-
----
-
-## 🧰 Scripts npm
-
-```bash
-npm run start:dev      # nest start --watch
-npm run lint       # eslint .
-npm run lint:fix
-npm run format     # prettier --write .
-npm run format:check
-npm run test
-```
+| Comando                      | Descripción                           |
+| ---------------------------- | ------------------------------------- |
+| `npm run start:dev`          | Inicia el servidor en modo desarrollo |
+| `npm run build`              | Compila el proyecto                   |
+| `npm run migration:generate` | Genera una nueva migración            |
+| `npm run migration:run`      | Ejecuta migraciones pendientes        |
+| `npm run migration:revert`   | Revierte la última migración          |
+| `npm run test`               | Ejecuta los tests                     |
+| `npm run test:cov`           | Muestra cobertura de tests            |
 
 > En Docker el build usa `--ignore-scripts` para evitar `husky` en instalaciones.
 
