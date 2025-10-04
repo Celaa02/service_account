@@ -21,78 +21,295 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# 💳 ACCOUNTS - SERVICES
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API para gestión de **usuarios**, **cuentas** y **transacciones** bancarias (depósitos, retiros y transferencias).  
+Incluye **JWT auth**, **validaciones**, **mapeo de errores** consistente y **documentación Swagger**.
 
-## Project setup
+---
 
-```bash
-$ npm install
+## 🚀 Descripción general
+
+Este servicio expone endpoints para la **gestión de usuarios, cuentas y transacciones bancarias**, incluyendo depósitos, retiros y transferencias entre cuentas.
+
+Está diseñado con **capas independientes (Domain, Application, Infrastructure, Interface)** para mantener separación de responsabilidades, escalabilidad y facilidad de prueba.
+
+---
+
+## 🚀 Stack & características
+
+- **Runtime**: Node.js 20
+- **Framework**: NestJS 11
+- **DB**: PostgreSQL
+- **ORM**: TypeORM 0.3
+- **Auth**: JWT (passport-jwt)
+- **Tests**: Jest (+ ts-jest)
+- **Lint/Format**: ESLint 9 + Prettier + Husky + lint-staged
+- **Docs**: Swagger/OpenAPI
+
+---
+
+## 📁 Estructura principal (Resumen)
+
+```
+src/
+├── app                     # Casos de uso (application layer) + DTOs
+├── domain                  # Entidades y contratos (ports/repositories)
+│   ├── accounts
+│   ├── auth
+│   └── transactions
+├── infra
+│   ├── auth                # JwtStrategy
+│   ├── config              # typeorm.config / datasource
+│   └── db/typeorm          # Entities + Repositories + Migrations
+├── interface
+│   ├── accounts            # AuthController (+ AuthModule)
+│   ├── auth                # AccountsController (+ AccountsModule)
+│   └── transactions        # TransactionsController (+ TransactionsModule)
+├── common                  # DomainError, ErrorCodes, mapDbError
+├── main.ts                 # Bootstrap + CORS + Swagger + ValidationPipe + Filter
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## ⚙️ Variables de entorno
 
-# watch mode
-$ npm run start:dev
+Crea un `.env` (o usa variables del shell). **No subas secretos al repo**.
 
-# production mode
-$ npm run start:prod
+```
+PORT=3000
+JWT_SECRET=super-secret
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=bank
+DB_SSL=false
 ```
 
-## Run tests
+---
+
+## 🧪 Quick Start (paso a paso)
+
+1. Instalar
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm i
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+2. Variables
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env   # o crea .env como arriba
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+3. DB (local o docker compose para Postgres)
+4. Migraciones
 
-## Resources
+```bash
+npm run migration:run
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+5. Levantar
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npm run
+```
 
-## Support
+6. Probar
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+open http://localhost:3000/docs
+```
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🧪 Tests
 
-## License
+```
+npm run test
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Los tests cubren casos de uso, controladores y manejo de errores.
+
+---
+
+## 🐳 Docker Compose
+
+```
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: bank
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+volumes:
+  bank_pgdata:
+```
+
+1. **Primera vez** (para correr migraciones/seeds automáticamente):
+
+```bash
+docker compose down -v
+docker compose up -d db
+```
+
+2. Ver estado y logs:
+
+```bash
+docker compose ps -a
+docker compose logs -f db
+docker compose logs -f api
+```
+
+3. Verifica API:
+
+```bash
+curl -i http://localhost:3000/
+```
+
+---
+
+## 🧱 Migraciones / Init de BD
+
+**Datasource TypeORM**: src/infra/config/typeorm.datasource.ts
+**Comandos**:
+
+```bash
+# Generar migración
+npm run migration:generate
+
+# Ejecutar migraciones
+npm run migration:run
+
+# Revertir última migración
+npm run migration:revert
+
+```
+
+---
+
+## 📘 Documentación (Swagger)
+
+- **Swagger UI**: `http://localhost:3000/api/docs`
+
+Incluye ejemplos, esquemas DTO, códigos de respuesta y autenticación JWT.
+
+---
+
+## 🔐 Autenticación
+
+- Autenticación por **JWT (Bearer Token)**.
+- Registro y login en `/auth/register` y `/auth/login`.
+- Los endpoints protegidos usan `@UseGuards(AuthGuard('jwt'))`.
+  luir:
+
+```
+Authorization: Bearer <TOKEN>
+```
+
+**Ejemplos**:
+
+```bash
+# register
+curl -s -X POST http://localhost:3000/auth/register   -H 'Content-Type: application/json'   -d '{
+  "email": "user@bank.com",
+  "password": "secret"
+}'
+
+# login
+curl -s -X POST http://localhost:3000/auth/login   -H 'Content-Type: application/json'   -d '{
+  "email": "user@bank.com",
+  "password": "secret"
+}'
+
+# profile
+curl -s http://localhost:3000/accounts  -H "Authorization: Bearer <TOKEN>"
+```
+
+---
+
+## 🔎 Endpoints
+
+**Auth**
+| Method | Path | Description |
+| ------ | -----------------| -----------------|
+| POST | `/auth/register` | Register user |
+| POST | `/auth/login` | Login user (JWT) |
+
+**Accounts (Bearer)**
+| Method | Path | Description |
+| ------ | ------------------------------ | -------------------------------------- |
+| POST | `/accounts` | Create cuenta |
+| GET | `/accounts` | Listar mis cuentas |
+| GET | `/accounts/:id` | Obtener cuenta por ID |
+| PATCH | `/accounts/:id/transactions` | Listar las transacciones de una cuenta |
+
+**Transactions (Bearer)**
+| Method | Path | Description |
+| ------ | ------------------------ | --------------------------- |
+| POST | `/transactions` | Crear deposito/retiro |
+| POST | `/transactions/transfer` | Transferir entre cuentas |
+| GET | `/transactions/me` | Listar mis transacciones |
+
+---
+
+## 🧰 Scripts útiles
+
+| Comando                      | Descripción                           |
+| ---------------------------- | ------------------------------------- |
+| `npm run start:dev`          | Inicia el servidor en modo desarrollo |
+| `npm run build`              | Compila el proyecto                   |
+| `npm run migration:generate` | Genera una nueva migración            |
+| `npm run migration:run`      | Ejecuta migraciones pendientes        |
+| `npm run migration:revert`   | Revierte la última migración          |
+| `npm run test`               | Ejecuta los tests                     |
+| `npm run test:cov`           | Muestra cobertura de tests            |
+
+> En Docker el build usa `--ignore-scripts` para evitar `husky` en instalaciones.
+
+---
+
+## 🔒 Seguridad
+
+- Nunca subas llaves reales a `.env`, `.env.example` o commits.
+- GitHub Push Protection puede bloquear pushes con posibles secretos. Usa **placeholders**.
+
+---
+
+## ✅ Checklist
+
+- [x] JWT auth funcionando
+- [x] Swagger con Bearer y DTOs
+- [x] Validaciones y errores consistentes
+- [x] Migraciones aplicadas
+- [x] Tests unitarios con cobertura
+- [x] CORS habilitado para Angular (`:4200`)
+
+---
+
+## 🚀 CI/CD with GitHub Actions
+
+This project uses **GitHub Actions** to automate:
+
+- **CI (Continuous Integration)**:
+  - Install dependencies
+  - Run unit tests
+  - Validate coverage
+  - Automatic deployment to DEV.
+
+### Main workflows:
+
+- `.github/workflows/ci.yml` → runs on PRs into `develop` and `main`
+
+---
+
+## 🧾 Créditos
+
+- **Autor:** Darly Vergara
+- **Fecha:** Octubre 2025
