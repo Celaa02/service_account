@@ -6,7 +6,6 @@ import { UsersTypeormRepository } from '../db/typeorm/repositories/users.typeorm
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  // 👈 nombre 'jwt'
   constructor(
     private readonly users: UsersTypeormRepository,
     private readonly cfg: ConfigService,
@@ -26,7 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         message: 'Invalid token user',
       });
     }
-    // lo que retornes queda en req.user
     return { id: user.id, email: user.email };
   }
 }

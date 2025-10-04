@@ -21,5 +21,5 @@ export const typeormConfig: DataSourceOptions = {
   migrations: [join(__dirname, '..', 'db', 'typeorm', 'migrations', '*.{ts,js}')],
 
   synchronize: false,
-  logging: true, // (opcional para depurar)
+  logging: true,
 };

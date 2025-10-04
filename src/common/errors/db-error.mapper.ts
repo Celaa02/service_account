@@ -14,7 +14,7 @@ export function mapDbError(err: unknown): never {
   if (err instanceof QueryFailedError) {
     const drv: unknown = (err as QueryFailedError).driverError;
 
-    const code = getStr(drv, 'code'); // p.ej. '23505'
+    const code = getStr(drv, 'code');
     const detail = getStr(drv, 'detail');
     const constraint = getStr(drv, 'constraint');
     const schema = getStr(drv, 'schema');

@@ -13,13 +13,13 @@ import { JwtStrategy } from '../../infra/auth/jwt.strategy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserOrmEntity]),
-    PassportModule.register({ defaultStrategy: 'jwt' }), // 👈 registra passport
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ global: true, secret: process.env.JWT_SECRET || 'changeme' }),
   ],
   controllers: [AuthController],
   providers: [
     UsersTypeormRepository,
-    JwtStrategy, // 👈 provee la estrategia
+    JwtStrategy,
     {
       provide: RegisterUserUseCase,
       useFactory: (r: UsersTypeormRepository) => new RegisterUserUseCase(r),
@@ -31,8 +31,6 @@ import { JwtStrategy } from '../../infra/auth/jwt.strategy';
       inject: [UsersTypeormRepository],
     },
   ],
-  exports: [
-    PassportModule, // 👈 exporta para otros módulos
-  ],
+  exports: [PassportModule],
 })
 export class AuthModule {}

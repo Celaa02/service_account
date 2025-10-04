@@ -23,7 +23,6 @@ export class AuthController {
   async register(@Body() dto: RegisterUserDto) {
     const user = await this.registerUser.execute({ email: dto.email, password: dto.password });
     const token = await this.jwt.signAsync({ sub: user.id, email: user.email });
-    console.log('🚀 ~ AuthController ~ register ~ token:', token);
     return { user, token };
   }
 

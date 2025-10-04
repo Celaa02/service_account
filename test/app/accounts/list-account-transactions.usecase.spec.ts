@@ -90,7 +90,6 @@ describe('ListAccountTransactionsUseCase', () => {
 
     expect(txRepo.listByAccount).toHaveBeenCalledWith('acc-1');
     expect(result).toHaveLength(5);
-    // Debe ser el slice rows[10..14]
     expect(result[0].id).toBe('tx-10');
     expect(result[4].id).toBe('tx-14');
   });

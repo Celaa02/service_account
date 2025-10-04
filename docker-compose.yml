@@ -16,7 +16,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  # 👇 corre migraciones en TS con devDeps y tu datasource .ts
   migrate:
     build:
       context: .
@@ -29,7 +28,7 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: postgres # ⚠️ usa la misma var que lee tu config
+      DB_PASSWORD: postgres
       DB_NAME: bank
     command: >
       sh -c '
@@ -55,7 +54,7 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: postgres # ⚠️ consistente con tu código
+      DB_PASSWORD: postgres
       DB_NAME: bank
       JWT_SECRET: supersecret
     ports:
