@@ -128,7 +128,6 @@ describe('TransactionsController (unit)', () => {
         offset: 0,
       });
 
-      // el controller aplica TransactionResponseDto.fromDomain
       expect(result).toEqual(
         rows.map((r) => expect.objectContaining({ id: r.id, accountId: r.accountId })),
       );

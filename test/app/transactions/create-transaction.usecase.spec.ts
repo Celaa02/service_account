@@ -64,7 +64,6 @@ describe('CreateTransactionUseCase', () => {
         amount: 100,
       }),
     ).rejects.toMatchObject<Partial<DomainError>>({
-      // en tu usecase se lanza como 'ACCOUNT_NOT_OWNED' (any)
       code: 'ACCOUNT_NOT_OWNED' as any,
     });
 

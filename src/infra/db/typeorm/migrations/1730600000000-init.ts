@@ -4,10 +4,8 @@ export class InitBankSchema20251003221500 implements MigrationInterface {
   name = 'InitBankSchema20251003221500';
 
   public async up(q: QueryRunner): Promise<void> {
-    // Extensión para uuid
     await q.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
 
-    // Tabla users
     await q.query(`
       CREATE TABLE IF NOT EXISTS "users" (
         "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -17,7 +15,6 @@ export class InitBankSchema20251003221500 implements MigrationInterface {
       )
     `);
 
-    // Tabla accounts
     await q.query(`
       CREATE TABLE IF NOT EXISTS "accounts" (
         "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -34,7 +31,6 @@ export class InitBankSchema20251003221500 implements MigrationInterface {
 
     await q.query(`CREATE INDEX IF NOT EXISTS "IDX_accounts_user_id" ON "accounts" ("user_id")`);
 
-    // Tabla transactions
     await q.query(`
       CREATE TABLE IF NOT EXISTS "transactions" (
         "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -61,6 +57,5 @@ export class InitBankSchema20251003221500 implements MigrationInterface {
     await q.query(`DROP TABLE IF EXISTS "accounts"`);
 
     await q.query(`DROP TABLE IF EXISTS "users"`);
-    // (No borramos la extensión uuid-ossp para no afectar otras cosas)
   }
 }

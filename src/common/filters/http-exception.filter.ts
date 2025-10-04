@@ -1,4 +1,3 @@
- 
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DomainError } from '../errors/domain-error';
@@ -10,7 +9,7 @@ type HttpErrorBody = {
   details?: unknown;
 };
 
-const ERROR_CODES_SET = new Set<string>(Object.values(ErrorCodes)); // evita cast a string[]
+const ERROR_CODES_SET = new Set<string>(Object.values(ErrorCodes));
 
 @Catch()
 export class GlobalHttpExceptionFilter implements ExceptionFilter {
@@ -46,10 +45,8 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
           message = exception.message ?? message;
         }
 
-        // details (puede ser cualquier cosa)
         details = body.details;
       } else {
-        // fallback
         message = exception.message ?? message;
       }
     } else if (exception instanceof DomainError) {
@@ -64,7 +61,6 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         [ErrorCodes.DB_ERROR]: HttpStatus.INTERNAL_SERVER_ERROR,
         [ErrorCodes.ACCOUNT_NOT_OWNED]: HttpStatus.FORBIDDEN,
         [ErrorCodes.EMAIL_ALREADY_REGISTERGED]: HttpStatus.CONFLICT,
-        // agrega aquí otros códigos si los tienes (p. ej. ACCOUNT_NOT_OWNED, TRANSFER_SAME_ACCOUNT, etc.)
       };
       code = exception.code;
       status = map[code] ?? HttpStatus.BAD_REQUEST;

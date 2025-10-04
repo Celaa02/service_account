@@ -38,7 +38,6 @@ export class AccountOrmEntity {
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
-  // 👇 propiedad inversa que falta
   @OneToMany(() => TransactionOrmEntity, (t) => t.account)
   transactions!: TransactionOrmEntity[];
 }

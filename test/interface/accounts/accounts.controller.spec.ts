@@ -9,7 +9,6 @@ import { ListAccountTransactionsUseCase } from '../../../src/app/accounts/use-ca
 describe('AccountsController (unit)', () => {
   let controller: AccountsController;
 
-  // Mocks de casos de uso
   const createAccountMock = { execute: jest.fn() };
   const getAccountMock = { execute: jest.fn() };
   const listMineMock = { execute: jest.fn() };

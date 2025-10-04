@@ -5,6 +5,6 @@ export class Account {
     public accountNumber: string,
     public balance: number,
     public createdAt: Date,
-    public ownerId: string, // 👈 nuevo campo
+    public ownerId: string,
   ) {}
 }
