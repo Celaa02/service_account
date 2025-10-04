@@ -6,8 +6,9 @@ import { AccountOrmEntity } from '../../infra/db/typeorm/entities/account.orm-en
 import { TransactionsTypeormRepository } from '../../infra/db/typeorm/repositories/transactions.typeorm-repository';
 import { CreateTransactionUseCase } from '../../app/transactions/use-cases/create-transaction.usecase';
 import { AccountsTypeormRepository } from '../../infra/db/typeorm/repositories/accounts.typeorm-repository';
-import { AuthModule } from '../auth/auth.module'; // 👈 más simple: importa AuthModule
+import { AuthModule } from '../auth/auth.module';
 import { CreateTransferUseCase } from '../../app/transactions/use-cases/create-transfer.usecase';
+import { ListUserTransactionsUseCase } from '../../app/transactions/use-cases/list-user-transactions.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TransactionOrmEntity, AccountOrmEntity]), AuthModule],
@@ -26,6 +27,12 @@ import { CreateTransferUseCase } from '../../app/transactions/use-cases/create-t
       useFactory: (accRepo: AccountsTypeormRepository, txRepo: TransactionsTypeormRepository) =>
         new CreateTransferUseCase(accRepo, txRepo),
       inject: [AccountsTypeormRepository, TransactionsTypeormRepository],
+    },
+    {
+      provide: ListUserTransactionsUseCase,
+      useFactory: (txRepo: TransactionsTypeormRepository) =>
+        new ListUserTransactionsUseCase(txRepo),
+      inject: [TransactionsTypeormRepository],
     },
   ],
 })

@@ -1,9 +1,9 @@
-import { CreateTransferUseCase } from '../../src/app/transactions/use-cases/create-transfer.usecase';
-import { IAccountsRepository } from '../../src/domain/accounts/accounts.repository';
-import { ITransactionsRepository } from '../../src/domain/transactions/transactions.repository';
-import { TransactionType, Transaction } from '../../src/domain/transactions/transaction.entity';
-import { DomainError } from '../../src/common/errors/domain-error';
-import { ErrorCodes } from '../../src/common/errors/error-codes';
+import { CreateTransferUseCase } from '../../../src/app/transactions/use-cases/create-transfer.usecase';
+import { IAccountsRepository } from '../../../src/domain/accounts/accounts.repository';
+import { ITransactionsRepository } from '../../../src/domain/transactions/transactions.repository';
+import { TransactionType, Transaction } from '../../../src/domain/transactions/transaction.entity';
+import { DomainError } from '../../../src/common/errors/domain-error';
+import { ErrorCodes } from '../../../src/common/errors/error-codes';
 
 describe('CreateTransferUseCase (unit)', () => {
   const userId = 'user-1';
