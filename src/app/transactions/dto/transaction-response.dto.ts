@@ -1,11 +1,12 @@
-import { Transaction } from '../../../domain/transactions/transaction.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { Transaction, TransactionType } from '../../../domain/transactions/transaction.entity';
 
 export class TransactionResponseDto {
-  id!: string;
-  accountId!: string;
-  type!: 'DEPOSIT' | 'WITHDRAWAL';
-  amount!: number;
-  createdAt!: Date;
+  @ApiProperty() id!: string;
+  @ApiProperty() accountId!: string;
+  @ApiProperty({ enum: TransactionType }) type!: TransactionType;
+  @ApiProperty() amount!: number;
+  @ApiProperty() createdAt!: Date;
 
   static fromDomain(t: Transaction): TransactionResponseDto {
     return {

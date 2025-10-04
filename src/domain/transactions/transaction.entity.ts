@@ -1,4 +1,3 @@
-// src/domain/transactions/transaction.entity.ts
 export enum TransactionType {
   DEPOSIT = 'DEPOSIT',
   WITHDRAWAL = 'WITHDRAWAL',

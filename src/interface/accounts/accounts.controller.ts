@@ -5,9 +5,20 @@ import { CreateAccountUseCase } from '../../app/accounts/use-cases/create-accoun
 import { GetAccountUseCase } from '../../app/accounts/use-cases/get-account.usecase';
 import { ListMyAccountsUseCase } from '../../app/accounts/use-cases/list-my-accounts.usecase';
 import { ListAccountTransactionsUseCase } from '../../app/accounts/use-cases/list-account-transactions.usecase';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
+@ApiTags('Accounts')
+@ApiBearerAuth()
 @Controller('accounts')
 export class AccountsController {
   constructor(
@@ -17,12 +28,17 @@ export class AccountsController {
     private readonly listAccTx: ListAccountTransactionsUseCase,
   ) {}
 
+  @ApiOperation({ summary: 'Crear cuenta' })
+  @ApiBody({ type: CreateAccountDto })
+  @ApiResponse({ status: 201, description: 'Cuenta creada' })
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateAccountDto) {
     return this.createAccount.execute(dto);
   }
 
+  @ApiOperation({ summary: 'Listar mis cuentas' })
+  @ApiResponse({ status: 200, description: 'OK' })
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async listMyAccounts(@Req() req: Request) {
@@ -31,6 +47,10 @@ export class AccountsController {
     return rows;
   }
 
+  @ApiOperation({ summary: 'Obtener una cuenta por id' })
+  @ApiParam({ name: 'id', description: 'Account UUID', required: true })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 404, description: 'ACCOUNT_NOT_FOUND' })
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getOne(@Req() req: Request, @Param('id') id: string) {
@@ -38,6 +58,11 @@ export class AccountsController {
     return this.getAccount.execute({ accountId: id, userId: user.id });
   }
 
+  @ApiOperation({ summary: 'Listar transacciones de la cuenta' })
+  @ApiParam({ name: 'id', description: 'Account UUID', required: true })
+  @ApiQuery({ name: 'limit', required: false, schema: { default: 20, minimum: 1, maximum: 100 } })
+  @ApiQuery({ name: 'offset', required: false, schema: { default: 0, minimum: 0 } })
+  @ApiResponse({ status: 200, description: 'OK' })
   @UseGuards(AuthGuard('jwt'))
   @Get(':id/transactions')
   async listAccountTxs(

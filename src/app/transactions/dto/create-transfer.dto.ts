@@ -1,7 +1,15 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID, IsNumber, Min } from 'class-validator';
 
 export class CreateTransferDto {
-  @IsUUID() fromAccountId!: string;
-  @IsUUID() toAccountId!: string;
-  @IsNumber() @Min(0.01) amount!: number;
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  fromAccountId!: string;
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  toAccountId!: string;
+  @ApiProperty({ example: 250 })
+  @IsNumber()
+  @Min(0.01)
+  amount!: number;
 }
